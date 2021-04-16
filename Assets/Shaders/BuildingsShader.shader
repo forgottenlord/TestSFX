@@ -4,8 +4,8 @@ Shader "Custom/BuildingsShader"
 {
     Properties
     {
-        _MainColor ("Color", Color) = (1,1,1,1)
-        _AltColor ("Color", Color) = (1,1,1,1)
+        _MainColor ("MainColor", Color) = (1,1,1,1)
+        _AltColor ("AltColor", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         //_Glossiness ("Smoothness", Range(0,1)) = 0.5
         //_Metallic ("Metallic", Range(0,1)) = 0.0
@@ -45,8 +45,10 @@ Shader "Custom/BuildingsShader"
         void vert (inout appdata_full v)
         {
 			float3 worldPos = mul (unity_ObjectToWorld, v.vertex).xyz;
-            factor =  (distance(worldPos, _TornadoPos));
-			v.vertex.y -= v.vertex.y /factor;
+			
+            factor =  distance(worldPos, _TornadoPos)/_InfluenceRange;
+			if (factor > 1) factor = 1;
+			v.vertex.y *= factor;
         }
 
         void surf (Input IN, inout SurfaceOutput o)
